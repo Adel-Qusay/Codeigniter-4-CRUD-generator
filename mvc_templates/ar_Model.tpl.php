@@ -83,6 +83,16 @@ class @@@uModelName@@@ extends Model {
     }
 	
     /**
+     * حذف عمود من الجدول.
+     */	
+    public function removeWhere(array $where)
+    {
+        return $this->db->table($this->table)
+            ->where($where)
+		    ->delete();
+    }
+	
+    /**
      * مسح الجدول.
      */
     public function trash()
@@ -90,7 +100,6 @@ class @@@uModelName@@@ extends Model {
         return $this->db->table($this->table)
 		    ->truncate();
     }
-
 
     /**
      * العدد الكلي للأعمدة.

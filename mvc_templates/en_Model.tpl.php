@@ -66,6 +66,13 @@ class @@@uModelName@@@ extends Model {
 		    ->delete();
     }
 	
+    public function removeWhere(array $where)
+    {
+        return $this->db->table($this->table)
+            ->where($where)
+		    ->delete();
+    }
+	
     public function trash()
     {
         return $this->db->table($this->table)
