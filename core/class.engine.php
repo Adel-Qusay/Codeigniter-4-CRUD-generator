@@ -225,58 +225,58 @@ class Engine
 
 			}elseif($iType[$i] == '1' && $crudShow == '1') { 
 				$htmlInputs .= '							<div class="col-md-4">
-							<div class="form-group">
-								<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-								<input type="text" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
-							</div>
-						</div>'."\n";
+								<div class="form-group">
+									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
+									<input type="text" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
+								</div>
+							</div>'."\n";
 			}elseif($iType[$i] == '2' && $crudShow == '1') {
 				$htmlInputs .= '							<div class="col-md-4">
-							<div class="form-group">
-								<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-								<input type="number" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' number="true" '.$inputRequired.'>
-							</div>
-						</div>'."\n";	
+								<div class="form-group">
+									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
+									<input type="number" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' number="true" '.$inputRequired.'>
+								</div>
+							</div>'."\n";	
 				$ciValidationType = '|numeric';														
 			}elseif($iType[$i] == '3' && $crudShow == '1') {
 				$htmlInputs .= '							<div class="col-md-4">
-							<div class="form-group">
-								<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-								<input type="password" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
-							</div>
-						</div>'."\n";
+								<div class="form-group">
+									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
+									<input type="password" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
+								</div>
+							</div>'."\n";
 			}elseif($iType[$i] == '4' && $crudShow == '1') {
 				$htmlInputs .= '							<div class="col-md-4">
-							<div class="form-group">
-								<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-								<input type="email" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
-							</div>
-						</div>'."\n";										
+								<div class="form-group">
+									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
+									<input type="email" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
+								</div>
+							</div>'."\n";										
 			}elseif($iType[$i] == '5' && $crudShow == '1') {
 				$htmlInputs .= '							<div class="col-md-4">
-							<div class="form-group">
-								<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-								<textarea cols="40" rows="5" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'></textarea>
-							</div>
-						</div>'."\n";					
+								<div class="form-group">
+									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
+									<textarea cols="40" rows="5" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'></textarea>
+								</div>
+							</div>'."\n";					
 			}elseif($iType[$i] == '6' && $crudShow == '1') {
 				$htmlInputs .= '							<div class="col-md-4">
-							<div class="form-group">
-								<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-								<select id="'.$inputName.'" name="'.$inputName.'" class="custom-select" '.$inputRequired.'>
-									<option value="select1">select1</option>
-									<option value="select2">select2</option>
-									<option value="select3">select3</option>
-								</select>
-							</div>
-						</div>'."\n";					
+								<div class="form-group">
+									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
+									<select id="'.$inputName.'" name="'.$inputName.'" class="custom-select" '.$inputRequired.'>
+										<option value="select1">select1</option>
+										<option value="select2">select2</option>
+										<option value="select3">select3</option>
+									</select>
+								</div>
+							</div>'."\n";					
 			}elseif($iType[$i] == '7' && $crudShow == '1') {
 				$htmlInputs .= '							<div class="col-md-4">
-							<div class="form-group">
-								<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-								<input type="date" id="'.$inputName.'" name="'.$inputName.'" class="form-control" dateISO="true" '.$inputRequired.'>
-							</div>
-						</div>'."\n";					
+								<div class="form-group">
+									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
+									<input type="date" id="'.$inputName.'" name="'.$inputName.'" class="form-control" dateISO="true" '.$inputRequired.'>
+								</div>
+							</div>'."\n";					
 				$ciValidationType = '|valid_date';				
 				
 			}else{
