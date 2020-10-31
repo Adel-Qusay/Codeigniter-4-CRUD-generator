@@ -68,8 +68,8 @@
 							</div>
 							<div class="col-md-4">
 								<div class="form-group">
-									<label for="primaryKey" class="form-label">Primary key: </label>
-									<select class="form-control" name="primaryKey" id="primaryKey" readonly>
+									<label for="primaryKey" class="form-label">Primary key: <span style="font-size:10px" class="text-primary"> You must define the primary key for each table</span><span class="text-danger">*</span></label>
+									<select class="form-control" name="primaryKey" id="primaryKey" readonly required>
 									</select>
 								</div>
 							</div>							
