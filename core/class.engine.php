@@ -79,7 +79,6 @@ class Engine
 		}
 
 		die ($primaryColumnsListHtml);
-
 	}
 	
 	public function getColumnsByTable($_FPOST)
@@ -158,14 +157,11 @@ class Engine
 							</div>
 							</li>';
 		}
-
 		die ($columnsListHtml.'</ul>');
-
 	}
 	
 	public function generate($_FPOST)
 	{
-		
 		$_POST = $this->sanitize($_FPOST); 
 		
 		$crudLang = $_POST['crudLang'];
@@ -173,11 +169,10 @@ class Engine
 		$controlerName = lcfirst(preg_replace("/[^A-Za-z0-9]/", "", $_POST['crudName']));
 		$uControlerName = ucfirst($controlerName);
 		$modelName = $controlerName.'Model';
-		$uModelName = ucfirst($modelName);			
-		
+		$uModelName = ucfirst($modelName);
 		$crudName = $_POST['crudName'];
 		$table = $_POST['table'];
-		$primaryKey = (isset($_POST['primaryKey']) AND $_POST['primaryKey'] != '')? $_POST['primaryKey'] : null;
+		$primaryKey = $_POST['primaryKey'];
 		$column = $_POST['column'];			
 		$label = $_POST['label'];
 		$name = $_POST['name'];
@@ -185,7 +180,6 @@ class Engine
 		$maxlength = $_POST['maxlength'];
 		$required = $_POST['required'];
 		$dtShow = $_POST['dtShow'];
-
 		$response = array();		
 		$htmlInputs = '                        <div class="row">'."\n";
 		$ciSelect = '';			
@@ -195,26 +189,20 @@ class Engine
 		$htmlDataTable = '';
 		$allowedFields = '';
 		$htmlEditFields = '';
-					
-		if (!isset($crudLang) || $crudLang =='' || !isset($crudName) || $crudName =='' || !isset($crudTitle) || $crudTitle =='' || !isset($table) || $table ==''){ 
-			
+		
+		if (!isset($crudLang) || $crudLang =='' || !isset($crudName) || $crudName =='' || !isset($crudTitle) || $crudTitle =='' || !isset($table) || $table =='' || !isset($primaryKey) || $primaryKey ==''){ 			
 			$response['success'] = false;
-			$response['message'] = 'Please fill all required fields.';
-			
+			$response['message'] = 'Please fill all required fields.';			
 			die(json_encode($response));			
-		}	
-
+		}
 		
 		for ($i=0; $i < count($column); $i++) {
-		
-			// Generate add/edit form
 			$inputlabel = (isset($label[$i]) AND $label[$i] != '')? $label[$i] : '';
 			$inputName = (isset($name[$i]) AND $name[$i] != '')? $name[$i] : '';
 			$inputMaxlength = (isset($maxlength[$i]) AND $maxlength[$i] != '')? ' maxlength="'.$maxlength[$i].'"' : '';
 			$inputRequired = (isset($required[$i]) AND $required[$i] == 1)? 'required' : '';
 			$htmlInputRequired = (isset($required[$i]) AND $required[$i] == 1)? '<span class="text-danger">*</span> ' : '';
-			$crudShow = (isset($name[$i]) AND $name[$i] != '')? 1 : 0;
-			
+			$crudShow = (isset($name[$i]) AND $name[$i] != '')? 1 : 0;		
 			$ciValidationMaxlength = (isset($maxlength[$i]) AND $maxlength[$i] != '')? '|max_length['.$maxlength[$i].']' : '';
 			$ciValidationRequired = (isset($required[$i]) AND $required[$i] == 1)? 'required' : 'permit_empty';
 			$ciValidationType = '';				
@@ -277,16 +265,18 @@ class Engine
 									<input type="date" id="'.$inputName.'" name="'.$inputName.'" class="form-control" dateISO="true" '.$inputRequired.'>
 								</div>
 							</div>'."\n";					
-				$ciValidationType = '|valid_date';				
-				
+				$ciValidationType = '|valid_date';								
 			}else{
 				$htmlInputs .= '						<div class="row">'."\n"; $htmlInputs .=' 							<input type="text" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>'."\n";					
 			}
+			
 			$ciFields .= '        $fields[\''.$column[$i].'\'] = $this->request->getPost(\''.$inputName.'\');'."\n";			
 			if($column[$i] != $primaryKey) $ciValidation .= '            \''.$column[$i].'\' => [\'label\' => \''.$inputlabel.'\', \'rules\' => \''.$ciValidationRequired.$ciValidationType.$ciValidationMaxlength.'\'],'."\n";
-			if($dtShow[$i] == '1') $ciDataTable .= '				$value->'.$column[$i].','."\n";
-			if($dtShow[$i] == '1') $htmlDataTable .= '					<th>'.$inputlabel.'</th>'."\n";
-			$ciSelect .= $column[$i].', ';
+			if($dtShow[$i] == '1'){
+				$ciDataTable .= '				$value->'.$column[$i].','."\n";
+				$htmlDataTable .= '					<th>'.$inputlabel.'</th>'."\n";
+				$ciSelect .= $column[$i].', ';
+			}
 			if($column[$i] != $primaryKey) $allowedFields .= '\''.$column[$i].'\', ';
 			if(($i % 3 == 0))  {$htmlInputs .= '						</div>'."\n"; $htmlInputs .= '						<div class="row">'."\n"; }
 			if(!next($column)) $htmlInputs .= '						</div>'."\n";
@@ -296,8 +286,6 @@ class Engine
 		$ciSelect = substr($ciSelect, 0, -2);
 		$allowedFields = substr($allowedFields, 0, -2);
 		
-		
-		// Generate MVC files
 		$model = file_get_contents(MVC_TPL .'/'.$crudLang.'_Model.tpl.php');
 		$controler = file_get_contents(MVC_TPL .'/'.$crudLang.'_Controler.tpl.php');
 		$view = file_get_contents(MVC_TPL .'/'.$crudLang.'_View.tpl.php');
@@ -345,7 +333,6 @@ class Engine
 		{
 			$fields = array_keys($input);
 		}
-
 		$return = array();
 		foreach($fields as $field)
 		{
@@ -360,19 +347,16 @@ class Engine
 				{
 					$value = $this->sanitize($value);
 				}
-
 				if (is_string($value))
 				{
 					if ($magic_quotes === true)
 					{
 						$value = stripslashes($value);
 					}
-
 					if (strpos($value, "\r") !== false)
 					{
 						$value = trim($value);
 					}
-
 					if (function_exists('iconv') && function_exists('mb_detect_encoding') && $utf8_encode)
 					{
 						$current_encoding = mb_detect_encoding($value);
@@ -381,14 +365,11 @@ class Engine
 							$value = iconv($current_encoding, 'UTF-8', $value);
 						}
 					}
-
 					$value = filter_var($value, FILTER_SANITIZE_STRING);
 				}
-
 				$return[$field] = $value;
 			}
 		}
-
 		return $return;
 	}
 	
