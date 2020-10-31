@@ -906,10 +906,7 @@ function add() {
 				},					
 				success: function(response) {
 
-					$('#data_table').DataTable().ajax.reload(null, false).draw(false);
-
 					if (response.success === true) {
-
 
 						Swal.fire({
 							position: 'bottom-end',
@@ -917,12 +914,13 @@ function add() {
 							title: response.messages,
 							showConfirmButton: false,
 							timer: 1500
+						}).then(function() {
+							$('#data_table').DataTable().ajax.reload(null, false).draw(false);
+							// Set a timeout to hide the modal
+							setTimeout(function() {
+								$('#edit-modal').modal('hide');
+							}, 1500);								
 						})
-						// Set a timeout to hide the modal
-						setTimeout(function() {
-							$('#add-modal').modal('hide');
-						}, 1500);
-						$('#confirm-btn').prop("disabled", false);
 
 					} else {
 
@@ -1011,9 +1009,6 @@ function edit(@@@primaryKey@@@) {
 							$('#edit-form-btn').html('<i class="fa fa-spinner fa-spin"></i>');
 						},								
 						success: function(response) {
-
-							$('#data_table').DataTable().ajax.reload(null, false).draw(false);
-
 							if (response.success === true) {
 
 								Swal.fire({
@@ -1022,13 +1017,14 @@ function edit(@@@primaryKey@@@) {
 									title: response.messages,
 									showConfirmButton: false,
 									timer: 1500
+								}).then(function() {
+									$('#data_table').DataTable().ajax.reload(null, false).draw(false);
+									// Set a timeout to hide the modal
+									setTimeout(function() {
+										$('#edit-modal').modal('hide');
+									}, 1500);								
 								})
-								// Set a timeout to hide the modal
-								setTimeout(function() {
-									$('#edit-modal').modal('hide');
-								}, 1500);
-								$('#confirm-btn').prop("disabled", false);
-								
+
 							} else {
 
 								if (response.messages instanceof Object) {
@@ -1089,7 +1085,6 @@ function remove(@@@primaryKey@@@) {
 			dataType: 'json',
 			success: function(response) {
 
-				$('#data_table').DataTable().ajax.reload(null, false).draw(false);
 				if (response.success === true) {
 					Swal.fire({
 						position: 'bottom-end',
@@ -1097,6 +1092,8 @@ function remove(@@@primaryKey@@@) {
 						title: response.messages,
 						showConfirmButton: false,
 						timer: 1500
+					}).then(function() {
+						$('#data_table').DataTable().ajax.reload(null, false).draw(false);
 					})
 				} else {
 					Swal.fire({
