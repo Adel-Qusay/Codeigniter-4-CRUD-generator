@@ -916,12 +916,9 @@ function add() {
 							timer: 1500
 						}).then(function() {
 							$('#data_table').DataTable().ajax.reload(null, false).draw(false);
-							// Set a timeout to hide the modal
-							setTimeout(function() {
-								$('#edit-modal').modal('hide');
-							}, 1500);								
+							$('#add-modal').modal('hide');
 						})
-
+						
 					} else {
 
 						if (response.messages instanceof Object) {
@@ -1019,10 +1016,7 @@ function edit(@@@primaryKey@@@) {
 									timer: 1500
 								}).then(function() {
 									$('#data_table').DataTable().ajax.reload(null, false).draw(false);
-									// Set a timeout to hide the modal
-									setTimeout(function() {
-										$('#edit-modal').modal('hide');
-									}, 1500);								
+									$('#edit-modal').modal('hide');
 								})
 
 							} else {
