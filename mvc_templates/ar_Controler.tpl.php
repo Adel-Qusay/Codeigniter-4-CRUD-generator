@@ -69,7 +69,7 @@ class @@@uControlerName@@@ extends BaseController
 				
 		} else {
 			
-			throw new \CodeIgniter\Router\Exceptions\RedirectException($route, 301);
+			throw new \CodeIgniter\Exceptions\PageNotFoundException();
 
 		}	
 		
@@ -152,7 +152,7 @@ class @@@uControlerName@@@ extends BaseController
 		
 		if (!$this->validation->check($id, 'required|numeric')) {
 
-			throw new \CodeIgniter\Router\Exceptions\RedirectException($route, 301);
+			throw new \CodeIgniter\Exceptions\PageNotFoundException();
 			
 		} else {	
 		
