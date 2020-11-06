@@ -38,7 +38,7 @@ class @@@uControlerName@@@ extends BaseController
 		
 	    $data['data'] = array();
  
-		$result = $this->@@@modelName@@@->get('@@@ciSelect@@@');        
+		$result = $this->@@@modelName@@@->->select('@@@ciSelect@@@')->findAll();
 		
 		foreach ($result as $key => $value) {
 							
@@ -64,7 +64,7 @@ class @@@uControlerName@@@ extends BaseController
 		
 		if ($this->validation->check($id, 'required|numeric')) {
 			
-			$data = $this->@@@modelName@@@->get('*', ['@@@primaryKey@@@' => $id]);
+			$data = $this->sourcesModel->where('@@@primaryKey@@@' ,$id)->first();
 
 			return $this->response->setJSON($data);	
 				
@@ -94,7 +94,7 @@ class @@@uControlerName@@@ extends BaseController
 			
         } else {
 
-            if ($this->@@@modelName@@@->add($fields)) {
+            if ($this->@@@modelName@@@->insert($fields)) {
 												
                 $response['success'] = true;
                 $response['messages'] = 'Data has been inserted successfully';	
@@ -128,7 +128,7 @@ class @@@uControlerName@@@ extends BaseController
 			
         } else {
 
-            if ($this->@@@modelName@@@->edit($fields['@@@primaryKey@@@'], $fields)) {
+            if ($this->@@@modelName@@@->update($fields['@@@primaryKey@@@'], $fields)) {
 				
                 $response['success'] = true;
                 $response['messages'] = 'Successfully updated';	
@@ -157,7 +157,7 @@ class @@@uControlerName@@@ extends BaseController
 			
 		} else {	
 		
-			if ($this->@@@modelName@@@->remove($id)) {
+			if ($this->@@@modelName@@@->delete($id)) {
 								
 				$response['success'] = true;
 				$response['messages'] = 'Deletion succeeded';	
