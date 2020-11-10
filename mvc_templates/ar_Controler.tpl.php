@@ -156,7 +156,7 @@ class @@@uControlerName@@@ extends BaseController
 			
 		} else {	
 		
-			if ($this->@@@modelName@@@->delete($id)) {
+			if ($this->@@@modelName@@@->where('@@@primaryKey@@@', $id)->delete()) {
 								
 				$response['success'] = true;
 				$response['messages'] = 'تمت عملية الحذف بنجاح';	
