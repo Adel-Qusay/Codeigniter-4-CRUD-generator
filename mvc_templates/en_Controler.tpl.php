@@ -38,7 +38,7 @@ class @@@uControlerName@@@ extends BaseController
 		
 	    $data['data'] = array();
  
-		$result = $this->@@@modelName@@@->->select('@@@ciSelect@@@')->findAll();
+		$result = $this->@@@modelName@@@->select('@@@ciSelect@@@')->findAll();
 		
 		foreach ($result as $key => $value) {
 							
