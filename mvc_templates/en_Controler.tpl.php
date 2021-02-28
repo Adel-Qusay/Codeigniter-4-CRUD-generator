@@ -64,8 +64,8 @@ class @@@uControlerName@@@ extends BaseController
 		
 		if ($this->validation->check($id, 'required|numeric')) {
 			
-			$data = $this->sourcesModel->where('@@@primaryKey@@@' ,$id)->first();
-
+			$data = $this->@@@modelName@@@->where('@@@primaryKey@@@' ,$id)->first();
+			
 			return $this->response->setJSON($data);	
 				
 		} else {
