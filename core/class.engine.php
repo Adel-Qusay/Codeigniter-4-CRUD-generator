@@ -95,8 +95,8 @@ class Engine
 		$columnsListHtml = '<ul class="list-group">';
 
 		while($column = mysqli_fetch_array($result))
-		{	
-			$disabled = ( $column[0] == trim($pkResult['Column_name']))? 'disabled' : '';		
+		{
+            $disabled = ( $column[0] == trim((isset($pkResult['Column_name'])?$pkResult['Column_name']:'')))? 'disabled' : '';
 			$columnsListHtml .='<li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"><div class="row">
 								<input type="text" name="column[]" id="column" class="form-control" value="'.$column[0].'" placeholder="" maxlength="50" hidden>
 								<div class="col-md-2">
