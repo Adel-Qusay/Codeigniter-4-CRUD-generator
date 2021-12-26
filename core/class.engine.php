@@ -11,93 +11,93 @@
 */
 
 class Engine
-{	
-	
-	Public $config;
-	
-	function __construct($config)
-	{
-		$this->config = $config;
-	}		
-	
-	public function getDatabases()
-	{
-		$db = mysqli_connect ($this->config['HOST'], $this->config['USER'], $this->config['PASS']);
-		
-		if(!$db) die("Database error");
+{
 
-		$result = mysqli_query($db,"show DATABASES");
+    Public $config;
 
-		$databaseList = null;
-		
-		while($databases = mysqli_fetch_array($result))
-		{
+    function __construct($config)
+    {
+        $this->config = $config;
+    }
 
-			$databaseList[]= $databases[0];
-		}
+    public function getDatabases()
+    {
+        $db = mysqli_connect ($this->config['HOST'], $this->config['USER'], $this->config['PASS']);
 
-		return $databaseList;
+        if(!$db) die("Database error");
 
-	}
+        $result = mysqli_query($db,"show DATABASES");
 
-	public function getTablesByDatabase($_FPOST)
-	{    
-		$_POST = $this->sanitize($_FPOST); 
-		
-		$db = mysqli_connect ($this->config['HOST'], $this->config['USER'], $this->config['PASS'], $_POST['database']);
-		
-		if(!$db) die("Database error");
-	
-		$result = mysqli_query($db,"SHOW TABLES FROM ".$_POST['database']);
-		
-		$tablesListHtml = '<option value="" selected="selected">-- Select --</option>';
+        $databaseList = null;
 
-		while($table = mysqli_fetch_array($result))
-		{
-			$tablesListHtml .= '<option value="' . $table[0] . '">' . $table[0] .'</option>';
-		}
+        while($databases = mysqli_fetch_array($result))
+        {
 
-		die($tablesListHtml);
+            $databaseList[]= $databases[0];
+        }
 
-	}
-	
-	public function getPrimaryColumnsByTable($_FPOST)
-	{    
-		$_POST = $this->sanitize($_FPOST); 
-		
-		$db = mysqli_connect ($this->config['HOST'], $this->config['USER'], $this->config['PASS'], $_POST['database']);
-		
-		if(!$db) die("Database error");
-		
-		$result = mysqli_query($db,'SHOW KEYS FROM '.$_POST['table'].' WHERE Key_name = \'PRIMARY\'');
+        return $databaseList;
 
-		$primaryColumnsListHtml = '';
+    }
 
-		while($column = mysqli_fetch_array($result))
-		{
-			$primaryColumnsListHtml .= '<option value="' .trim($column['Column_name']).'">' . trim($column['Column_name']).'</option>';
-		}
+    public function getTablesByDatabase($_FPOST)
+    {
+        $_POST = $this->sanitize($_FPOST);
 
-		die ($primaryColumnsListHtml);
-	}
-	
-	public function getColumnsByTable($_FPOST)
-	{    
-		$_POST = $this->sanitize($_FPOST); 
-		
-		$db = mysqli_connect ($this->config['HOST'], $this->config['USER'], $this->config['PASS'], $_POST['database']);
-		
-		if(!$db) die("Database error");
-		
-		$result = mysqli_query($db,"DESC ".$_POST['table']);
-		$pkResult = mysqli_fetch_array(mysqli_query($db,'SHOW KEYS FROM '.$_POST['table'].' WHERE Key_name = \'PRIMARY\''));
+        $db = mysqli_connect ($this->config['HOST'], $this->config['USER'], $this->config['PASS'], $_POST['database']);
 
-		$columnsListHtml = '<ul class="list-group">';
+        if(!$db) die("Database error");
 
-		while($column = mysqli_fetch_array($result))
-		{	
-			$disabled = ( $column[0] == trim($pkResult['Column_name']))? 'disabled' : '';		
-			$columnsListHtml .='<li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"><div class="row">
+        $result = mysqli_query($db,"SHOW TABLES FROM ".$_POST['database']);
+
+        $tablesListHtml = '<option value="" selected="selected">-- Select --</option>';
+
+        while($table = mysqli_fetch_array($result))
+        {
+            $tablesListHtml .= '<option value="' . $table[0] . '">' . $table[0] .'</option>';
+        }
+
+        die($tablesListHtml);
+
+    }
+
+    public function getPrimaryColumnsByTable($_FPOST)
+    {
+        $_POST = $this->sanitize($_FPOST);
+
+        $db = mysqli_connect ($this->config['HOST'], $this->config['USER'], $this->config['PASS'], $_POST['database']);
+
+        if(!$db) die("Database error");
+
+        $result = mysqli_query($db,'SHOW KEYS FROM '.$_POST['table'].' WHERE Key_name = \'PRIMARY\'');
+
+        $primaryColumnsListHtml = '';
+
+        while($column = mysqli_fetch_array($result))
+        {
+            $primaryColumnsListHtml .= '<option value="' .trim($column['Column_name']).'">' . trim($column['Column_name']).'</option>';
+        }
+
+        die ($primaryColumnsListHtml);
+    }
+
+    public function getColumnsByTable($_FPOST)
+    {
+        $_POST = $this->sanitize($_FPOST);
+
+        $db = mysqli_connect ($this->config['HOST'], $this->config['USER'], $this->config['PASS'], $_POST['database']);
+
+        if(!$db) die("Database error");
+
+        $result = mysqli_query($db,"DESC ".$_POST['table']);
+        $pkResult = mysqli_fetch_array(mysqli_query($db,'SHOW KEYS FROM '.$_POST['table'].' WHERE Key_name = \'PRIMARY\''));
+
+        $columnsListHtml = '<ul class="list-group">';
+
+        while($column = mysqli_fetch_array($result))
+        {
+            $disabled = ( $column[0] == trim((isset($pkResult['Column_name'])?$pkResult['Column_name']:'')))? 'disabled' : '';
+            $columnsListHtml .='<li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"><div class="row">
 								<input type="text" name="column[]" id="column" class="form-control" value="'.$column[0].'" placeholder="" maxlength="50" hidden>
 								<div class="col-md-2">
 									<div class="form-group">
@@ -156,99 +156,99 @@ class Engine
 								</div>									
 							</div>
 							</li>';
-		}
-		die ($columnsListHtml.'</ul>');
-	}
-	
-	public function generate($_FPOST)
-	{
-		$_POST = $this->sanitize($_FPOST); 
-		
-		$crudLang = $_POST['crudLang'];
-		$crudTitle = $_POST['crudTitle'];
-		$controlerName = lcfirst(preg_replace("/[^A-Za-z0-9]/", "", $_POST['crudName']));
-		$uControlerName = ucfirst($controlerName);
-		$modelName = $controlerName.'Model';
-		$uModelName = ucfirst($modelName);
-		$crudName = $_POST['crudName'];
-		$table = $_POST['table'];
-		$primaryKey = $_POST['primaryKey'];
-		$column = $_POST['column'];			
-		$label = $_POST['label'];
-		$name = $_POST['name'];
-		$iType = $_POST['iType'];
-		$maxlength = $_POST['maxlength'];
-		$required = $_POST['required'];
-		$dtShow = $_POST['dtShow'];
-		$response = array();		
-		$htmlInputs = '                        <div class="row">'."\n";
-		$ciSelect = '';			
-		$ciFields = '';
-		$ciValidation = '';	
-		$ciDataTable = '';
-		$htmlDataTable = '';
-		$allowedFields = '';
-		$htmlEditFields = '';
-		
-		if (!isset($crudLang) || $crudLang =='' || !isset($crudName) || $crudName =='' || !isset($crudTitle) || $crudTitle =='' || !isset($table) || $table =='' || !isset($primaryKey) || $primaryKey ==''){ 			
-			$response['success'] = false;
-			$response['message'] = 'Please fill all required fields.';			
-			die(json_encode($response));			
-		}
-		
-		for ($i=0; $i < count($column); $i++) {
-			$inputlabel = (isset($label[$i]) AND $label[$i] != '')? $label[$i] : '';
-			$inputName = (isset($name[$i]) AND $name[$i] != '')? $name[$i] : '';
-			$inputMaxlength = (isset($maxlength[$i]) AND $maxlength[$i] != '')? ' maxlength="'.$maxlength[$i].'"' : '';
-			$inputRequired = (isset($required[$i]) AND $required[$i] == 1)? 'required' : '';
-			$htmlInputRequired = (isset($required[$i]) AND $required[$i] == 1)? '<span class="text-danger">*</span> ' : '';
-			$crudShow = (isset($name[$i]) AND $name[$i] != '')? 1 : 0;		
-			$ciValidationMaxlength = (isset($maxlength[$i]) AND $maxlength[$i] != '')? '|max_length['.$maxlength[$i].']' : '';
-			$ciValidationRequired = (isset($required[$i]) AND $required[$i] == 1)? 'required' : 'permit_empty';
-			$ciValidationType = '';				
-			
-			if($column[$i] == trim($primaryKey)){
-				$htmlInputs .=' 							<input type="hidden" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>'."\n";
-				$ciValidationType = '|numeric';														
+        }
+        die ($columnsListHtml.'</ul>');
+    }
 
-			}elseif($iType[$i] == '1' && $crudShow == '1') { 
-				$htmlInputs .= '							<div class="col-md-4">
+    public function generate($_FPOST)
+    {
+        $_POST = $this->sanitize($_FPOST);
+
+        $crudLang = $_POST['crudLang'];
+        $crudTitle = $_POST['crudTitle'];
+        $controlerName = lcfirst(preg_replace("/[^A-Za-z0-9]/", "", $_POST['crudName']));
+        $uControlerName = ucfirst($controlerName);
+        $modelName = $controlerName.'Model';
+        $uModelName = ucfirst($modelName);
+        $crudName = $_POST['crudName'];
+        $table = $_POST['table'];
+        $primaryKey = $_POST['primaryKey'];
+        $column = $_POST['column'];
+        $label = $_POST['label'];
+        $name = $_POST['name'];
+        $iType = $_POST['iType'];
+        $maxlength = $_POST['maxlength'];
+        $required = $_POST['required'];
+        $dtShow = $_POST['dtShow'];
+        $response = array();
+        $htmlInputs = '                        <div class="row">'."\n";
+        $ciSelect = '';
+        $ciFields = '';
+        $ciValidation = '';
+        $ciDataTable = '';
+        $htmlDataTable = '';
+        $allowedFields = '';
+        $htmlEditFields = '';
+
+        if (!isset($crudLang) || $crudLang =='' || !isset($crudName) || $crudName =='' || !isset($crudTitle) || $crudTitle =='' || !isset($table) || $table =='' || !isset($primaryKey) || $primaryKey ==''){
+            $response['success'] = false;
+            $response['message'] = 'Please fill all required fields.';
+            die(json_encode($response));
+        }
+
+        for ($i=0; $i < count($column); $i++) {
+            $inputlabel = (isset($label[$i]) AND $label[$i] != '')? $label[$i] : '';
+            $inputName = (isset($name[$i]) AND $name[$i] != '')? $name[$i] : '';
+            $inputMaxlength = (isset($maxlength[$i]) AND $maxlength[$i] != '')? ' maxlength="'.$maxlength[$i].'"' : '';
+            $inputRequired = (isset($required[$i]) AND $required[$i] == 1)? 'required' : '';
+            $htmlInputRequired = (isset($required[$i]) AND $required[$i] == 1)? '<span class="text-danger">*</span> ' : '';
+            $crudShow = (isset($name[$i]) AND $name[$i] != '')? 1 : 0;
+            $ciValidationMaxlength = (isset($maxlength[$i]) AND $maxlength[$i] != '')? '|max_length['.$maxlength[$i].']' : '';
+            $ciValidationRequired = (isset($required[$i]) AND $required[$i] == 1)? 'required' : 'permit_empty';
+            $ciValidationType = '';
+
+            if($column[$i] == trim($primaryKey)){
+                $htmlInputs .=' 							<input type="hidden" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>'."\n";
+                $ciValidationType = '|numeric';
+
+            }elseif($iType[$i] == '1' && $crudShow == '1') {
+                $htmlInputs .= '							<div class="col-md-4">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
 									<input type="text" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
 								</div>
 							</div>'."\n";
-			}elseif($iType[$i] == '2' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
+            }elseif($iType[$i] == '2' && $crudShow == '1') {
+                $htmlInputs .= '							<div class="col-md-4">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
 									<input type="number" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' number="true" '.$inputRequired.'>
 								</div>
-							</div>'."\n";	
-				$ciValidationType = '|numeric';														
-			}elseif($iType[$i] == '3' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
+							</div>'."\n";
+                $ciValidationType = '|numeric';
+            }elseif($iType[$i] == '3' && $crudShow == '1') {
+                $htmlInputs .= '							<div class="col-md-4">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
 									<input type="password" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
 								</div>
 							</div>'."\n";
-			}elseif($iType[$i] == '4' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
+            }elseif($iType[$i] == '4' && $crudShow == '1') {
+                $htmlInputs .= '							<div class="col-md-4">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
 									<input type="email" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
 								</div>
-							</div>'."\n";										
-			}elseif($iType[$i] == '5' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
+							</div>'."\n";
+            }elseif($iType[$i] == '5' && $crudShow == '1') {
+                $htmlInputs .= '							<div class="col-md-4">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
 									<textarea cols="40" rows="5" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'></textarea>
 								</div>
-							</div>'."\n";					
-			}elseif($iType[$i] == '6' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
+							</div>'."\n";
+            }elseif($iType[$i] == '6' && $crudShow == '1') {
+                $htmlInputs .= '							<div class="col-md-4">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
 									<select id="'.$inputName.'" name="'.$inputName.'" class="custom-select" '.$inputRequired.'>
@@ -257,120 +257,115 @@ class Engine
 										<option value="select3">select3</option>
 									</select>
 								</div>
-							</div>'."\n";					
-			}elseif($iType[$i] == '7' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
+							</div>'."\n";
+            }elseif($iType[$i] == '7' && $crudShow == '1') {
+                $htmlInputs .= '							<div class="col-md-4">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
 									<input type="date" id="'.$inputName.'" name="'.$inputName.'" class="form-control" dateISO="true" '.$inputRequired.'>
 								</div>
-							</div>'."\n";					
-				$ciValidationType = '|valid_date';								
-			}else{
-				$htmlInputs .= '						<div class="row">'."\n"; $htmlInputs .=' 							<input type="text" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>'."\n";					
-			}
-			
-			$ciFields .= '        $fields[\''.$column[$i].'\'] = $this->request->getPost(\''.$inputName.'\');'."\n";			
-			if($column[$i] != $primaryKey) $ciValidation .= '            \''.$column[$i].'\' => [\'label\' => \''.$inputlabel.'\', \'rules\' => \''.$ciValidationRequired.$ciValidationType.$ciValidationMaxlength.'\'],'."\n";
-			if($dtShow[$i] == '1'){
-				$ciDataTable .= '				$value->'.$column[$i].','."\n";
-				$htmlDataTable .= '					<th>'.$inputlabel.'</th>'."\n";
-				$ciSelect .= $column[$i].', ';
-			}
-			if($column[$i] != $primaryKey) $allowedFields .= '\''.$column[$i].'\', ';
-			if(($i % 3 == 0))  {$htmlInputs .= '						</div>'."\n"; $htmlInputs .= '						<div class="row">'."\n"; }
-			if(!next($column)) $htmlInputs .= '						</div>'."\n";
-			if($crudShow == '1') $htmlEditFields .= '			$("#edit-form #'.$inputName.'").val(response.'.$column[$i].');'."\n";
-		}	
+							</div>'."\n";
+                $ciValidationType = '|valid_date';
+            }else{
+                $htmlInputs .= '						<div class="row">'."\n"; $htmlInputs .=' 							<input type="text" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>'."\n";
+            }
 
-		$ciSelect = substr($ciSelect, 0, -2);
-		$allowedFields = substr($allowedFields, 0, -2);
-		
-		$model = file_get_contents(MVC_TPL .'/'.$crudLang.'_Model.tpl.php');
-		$controler = file_get_contents(MVC_TPL .'/'.$crudLang.'_Controler.tpl.php');
-		$view = file_get_contents(MVC_TPL .'/'.$crudLang.'_View.tpl.php');
-		
-		$find   = ['@@@table@@@','@@@primaryKey@@@', '@@@allowedFields@@@', '@@@controlerName@@@', '@@@uControlerName@@@' , '@@@modelName@@@' , '@@@uModelName@@@', '@@@crudTitle@@@', '@@@htmlInputs@@@', '@@@ciFields@@@', '@@@ciValidation@@@', '@@@ciDataTable@@@', '@@@htmlDataTable@@@', '@@@htmlEditFields@@@', '@@@ciSelect@@@'];
-		$replace   = [$table, $primaryKey, $allowedFields, $controlerName, $uControlerName , $modelName , $uModelName, $crudTitle, $htmlInputs, $ciFields, $ciValidation, $ciDataTable, $htmlDataTable, $htmlEditFields, $ciSelect];
+            $ciFields .= '        $fields[\''.$column[$i].'\'] = $this->request->getPost(\''.$inputName.'\');'."\n";
+            if($column[$i] != $primaryKey) $ciValidation .= '            \''.$column[$i].'\' => [\'label\' => \''.$inputlabel.'\', \'rules\' => \''.$ciValidationRequired.$ciValidationType.$ciValidationMaxlength.'\'],'."\n";
+            if($dtShow[$i] == '1'){
+                $ciDataTable .= '				$value->'.$column[$i].','."\n";
+                $htmlDataTable .= '					<th>'.$inputlabel.'</th>'."\n";
+                $ciSelect .= $column[$i].', ';
+            }
+            if($column[$i] != $primaryKey) $allowedFields .= '\''.$column[$i].'\', ';
+            if(($i % 3 == 0))  {$htmlInputs .= '						</div>'."\n"; $htmlInputs .= '						<div class="row">'."\n"; }
+            if(!next($column)) $htmlInputs .= '						</div>'."\n";
+            if($crudShow == '1') $htmlEditFields .= '			$("#edit-form #'.$inputName.'").val(response.'.$column[$i].');'."\n";
+        }
 
-		$model = str_replace($find, $replace, $model);
-		$controler = str_replace($find, $replace, $controler);
-		$view = str_replace($find, $replace, $view);
-		
-		file_put_contents(DOWNLOADS .'/Models/'.$uModelName.'.php',$model);
-		file_put_contents(DOWNLOADS .'/Controllers/'.$uControlerName.'.php',$controler);
-		file_put_contents(DOWNLOADS .'/Views/'.$controlerName.'.php',$view);
-		
-		$response['success'] = true;
-		$response['message'] = '<a class="text-white" href="'.BASE_URL .'/download.php?t=c&f='.$uControlerName.'.php'.'" target="_blank">('.$uControlerName.'.php'.') Controler</a>
+        $ciSelect = substr($ciSelect, 0, -2);
+        $allowedFields = substr($allowedFields, 0, -2);
+
+        $model = file_get_contents(MVC_TPL .'/'.$crudLang.'_Model.tpl.php');
+        $controler = file_get_contents(MVC_TPL .'/'.$crudLang.'_Controler.tpl.php');
+        $view = file_get_contents(MVC_TPL .'/'.$crudLang.'_View.tpl.php');
+
+        $find   = ['@@@table@@@','@@@primaryKey@@@', '@@@allowedFields@@@', '@@@controlerName@@@', '@@@uControlerName@@@' , '@@@modelName@@@' , '@@@uModelName@@@', '@@@crudTitle@@@', '@@@htmlInputs@@@', '@@@ciFields@@@', '@@@ciValidation@@@', '@@@ciDataTable@@@', '@@@htmlDataTable@@@', '@@@htmlEditFields@@@', '@@@ciSelect@@@'];
+        $replace   = [$table, $primaryKey, $allowedFields, $controlerName, $uControlerName , $modelName , $uModelName, $crudTitle, $htmlInputs, $ciFields, $ciValidation, $ciDataTable, $htmlDataTable, $htmlEditFields, $ciSelect];
+
+        $model = str_replace($find, $replace, $model);
+        $controler = str_replace($find, $replace, $controler);
+        $view = str_replace($find, $replace, $view);
+
+        file_put_contents(DOWNLOADS .'/Models/'.$uModelName.'.php',$model);
+        file_put_contents(DOWNLOADS .'/Controllers/'.$uControlerName.'.php',$controler);
+        file_put_contents(DOWNLOADS .'/Views/'.$controlerName.'.php',$view);
+
+        $response['success'] = true;
+        $response['message'] = '<a class="text-white" href="'.BASE_URL .'/download.php?t=c&f='.$uControlerName.'.php'.'" target="_blank">('.$uControlerName.'.php'.') Controler</a>
 		<br><a class="text-white" href="'.BASE_URL .'/download.php?t=m&f='.$uModelName.'.php'.'" target="_blank">('.$uModelName.'.php'.') Model</a>
 		<br><a class="text-white" href="'.BASE_URL .'/download.php?t=v&f='.$controlerName.'.php'.'" target="_blank">('.$controlerName.'.php'.') View</a>';
-		
-		die(json_encode($response));
-	}
-		
-	public function getBetween($string, $start, $end){
-		$string = ' ' . $string;
-		$ini = strpos($string, $start);
-		if ($ini == 0) return '';
-		$ini += strlen($start);
-		$len = strpos($string, $end, $ini) - $ini;
-		return substr($string, $ini, $len);
-	}
-	
-	public function snakeToCamel($str) {
-	  return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $str))));
-	}
-	
-	public function colToLabel($str) {
-	  return ucfirst(str_replace('_', ' ', $str));
-	}		
-	
-	public function sanitize(array $input, array $fields = array() , $utf8_encode = true)
-	{
-		$magic_quotes = (bool)get_magic_quotes_gpc();
-		if (empty($fields))
-		{
-			$fields = array_keys($input);
-		}
-		$return = array();
-		foreach($fields as $field)
-		{
-			if (!isset($input[$field]))
-			{
-				continue;
-			}
-			else
-			{
-				$value = $input[$field];
-				if (is_array($value))
-				{
-					$value = $this->sanitize($value);
-				}
-				if (is_string($value))
-				{
-					if ($magic_quotes === true)
-					{
-						$value = stripslashes($value);
-					}
-					if (strpos($value, "\r") !== false)
-					{
-						$value = trim($value);
-					}
-					if (function_exists('iconv') && function_exists('mb_detect_encoding') && $utf8_encode)
-					{
-						$current_encoding = mb_detect_encoding($value);
-						if ($current_encoding != 'UTF-8' && $current_encoding != 'UTF-16')
-						{
-							$value = iconv($current_encoding, 'UTF-8', $value);
-						}
-					}
-					$value = filter_var($value, FILTER_SANITIZE_STRING);
-				}
-				$return[$field] = $value;
-			}
-		}
-		return $return;
-	}
-	
+
+        die(json_encode($response));
+    }
+
+    public function getBetween($string, $start, $end){
+        $string = ' ' . $string;
+        $ini = strpos($string, $start);
+        if ($ini == 0) return '';
+        $ini += strlen($start);
+        $len = strpos($string, $end, $ini) - $ini;
+        return substr($string, $ini, $len);
+    }
+
+    public function snakeToCamel($str) {
+        return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $str))));
+    }
+
+    public function colToLabel($str) {
+        return ucfirst(str_replace('_', ' ', $str));
+    }
+
+    public function sanitize(array $input, array $fields = array() , $utf8_encode = true)
+    {
+        if (empty($fields))
+        {
+            $fields = array_keys($input);
+        }
+        $return = array();
+        foreach($fields as $field)
+        {
+            if (!isset($input[$field]))
+            {
+                continue;
+            }
+            else
+            {
+                $value = $input[$field];
+                if (is_array($value))
+                {
+                    $value = $this->sanitize($value);
+                }
+                if (is_string($value))
+                {
+                    if (strpos($value, "\r") !== false)
+                    {
+                        $value = trim($value);
+                    }
+                    if (function_exists('iconv') && function_exists('mb_detect_encoding') && $utf8_encode)
+                    {
+                        $current_encoding = mb_detect_encoding($value);
+                        if ($current_encoding != 'UTF-8' && $current_encoding != 'UTF-16')
+                        {
+                            $value = iconv($current_encoding, 'UTF-8', $value);
+                        }
+                    }
+                    $value = filter_var($value, FILTER_SANITIZE_STRING);
+                }
+                $return[$field] = $value;
+            }
+        }
+        return $return;
+    }
+
 }
