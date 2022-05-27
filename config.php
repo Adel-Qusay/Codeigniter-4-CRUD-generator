@@ -36,7 +36,8 @@ define('BASE_URL',  (isset($_SERVER['HTTPS']) ? 'http' : 'http') . '://'.$_SERVE
 
 $config['HOST'] = '127.0.0.1';
 $config['USER'] = 'root';
-$config['PASS'] = 'root';
+// $config['PASS'] = 'root';
+$config['PASS'] = '';
 
 /*
 |--------------------------------------------------------------------------
