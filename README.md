@@ -3,9 +3,9 @@
 - add Unique, minlength Validation 
 - use CodeIgniter multi-Language (please read readme.txt in  '/downloads/template.zip')
 - add minlength in genertor page, remove maxlength (defined by database)
-    auto selected input type 'Date' if table field is date, time, timestamp, year
-    auto insert Default Crud-name & Crud-Title after 'Select Table'
-    disable 'CRUD language'
+- auto selected input type 'Date' if table field is date, time, timestamp, year
+- auto insert Default Crud-name & Crud-Title after 'Select Table'
+- disable 'CRUD language'
 
 ## View
 - use single modal dialog for Add & Edit. for fixed 'dom duplicate error'
@@ -32,6 +32,7 @@
 
 
 > Sorry! I write and speak little English. please suggest
+
 
 # Codeigniter-4-CRUD-generator
 ADEL CCG is an easy open-source intuitive web app to create AdminLTE3 -Bootstrap 4- dashboards with CRUD operations in php.
