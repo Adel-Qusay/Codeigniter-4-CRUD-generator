@@ -6,6 +6,7 @@
 	<div class="text-center">
 		<h1>ADEL CODEIGNITER 4 CRUD GENERATOR</h1>
 		<p>مرحبا بكم في سكربت إنشاء نظام الإضافة-التعديل-الحذف لإطار كوداجنيتر 4</p>
+		<p>2022 New Features >> <a href="https://github.com/gomonx/Ci4-CRUD-generator-Upgrades" target=”_blank”> check for update</a></p>
 		<a href="<?= BASE_URL ?>/?p=generator" class="btn btn-success">Let's Start</a>		
 	</div>
 </div>

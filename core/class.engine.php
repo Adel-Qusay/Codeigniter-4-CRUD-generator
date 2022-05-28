@@ -97,20 +97,28 @@ class Engine
 		while($column = mysqli_fetch_array($result))
 		{
             $disabled = ( $column[0] == trim((isset($pkResult['Column_name'])?$pkResult['Column_name']:'')))? 'disabled' : '';
-			$columnsListHtml .='<li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"><div class="row">
+			//list-group-item-action d-flex justify-content-between align-items-center
+			$columnsListHtml .='<li class="list-group-item list-group-item-action justify-content-between align-items-center">
+								<div ><b style="color:blue">Table Field: '. $column[0] .' | Max Length: [' . $this->getBetween($column[1], '(', ')') .']</b></div>
+								<div class="row">
 								<input type="text" name="column[]" id="column" class="form-control" value="'.$column[0].'" placeholder="" maxlength="50" hidden>
+								<input type="hidden" name="unique[] id="unique" value="'.(strpos($column[3], 'UNI') !== false ? '1' : '0').'">
+								<!--Name Disable ห้ามแก้ไข เพราะใช้ Validation แบบ getErrors แทน SweetAlert-->	
+								<input type="hidden" name="name[]" id="name" class="form-control" value="'.$this->snakeToCamel($column[0]).'" placeholder="" maxlength="50" required>
+								<!--<div class="col-md-2">
+									<div class="form-group">
+										<label for="name" class="form-label">Name/ID:</label>
+										<input type="text" name="name[]" id="name" class="form-control" value="'.$this->snakeToCamel($column[0]).'" placeholder="" maxlength="50" required>
+									</div>
+								</div>-->
+								<!--Label-->
 								<div class="col-md-2">
 									<div class="form-group">
 										<label for="label" class="form-label">Label:</label>
 										<input type="text" name="label[]" id="label" class="form-control" value="'.$this->colToLabel($column[0]).'" placeholder="" maxlength="50" required>
 									</div>
 								</div>	
-								<div class="col-md-2">
-									<div class="form-group">
-										<label for="name" class="form-label">Name/ID:</label>
-										<input type="text" name="name[]" id="name" class="form-control" value="'.$this->snakeToCamel($column[0]).'" placeholder="" maxlength="50" required>
-									</div>
-								</div>	
+								<!--Input Type-->	
 								<div class="col-md-2">
 									<div class="form-group">
 										<label for="iType" class="form-label">Input type:</label>
@@ -118,38 +126,45 @@ class Engine
 											<option value="1" '.(strpos($column[1], 'var') !== false ? 'selected="selected"' : "").'>Text field</option>
 											<option value="2" '.(strpos($column[1], 'int') !== false ? 'selected="selected"' : "").'>Number field</option>
 											<option value="3" '.(strpos($column[0], 'pass') !== false ? 'selected="selected"' : "").'>Password field</option>
-											<option value="4">Email field</option>
+											<option value="4" '.(strpos($column[0], 'email') !== false ? 'selected="selected"' : "").'>Email field</option>
 											<option value="5" '.(strpos($column[1], 'text') !== false ? 'selected="selected"' : "").'>Text area</option>
 											<option value="6">Select</option>
-											<option value="7" '.(strpos($column[1], 'date') !== false ? 'selected="selected"' : "").'>Date</option>
+											<option value="7" '.(strpos('datetimestampyear',$column[1]) !== false ? 'selected="selected"' : "").'>Date</option>
 										</select>
 									</div>
-								</div>									
+								</div>	
+								<!-- เพิ่ม Min Length & Max Length ดึงจาก Database แทน-->									
 								<div class="col-md-2">
 									<div class="form-group">
-										<label for="maxlength" class="form-label">Max length:</label>
-										<input type="number" name="maxlength[]" id="maxlength" class="form-control" value="'. $this->getBetween($column[1], '(', ')').'" placeholder="" number="true" maxlength="50">
+										<label for="minlength" class="form-label">Min length:</label>
+										<input type="number" name="minlength[]" id="minlength" class="form-control" value="0" placeholder="" number="true" min="0">
 									</div>
-								</div>							
+									<div>
+									<input type="hidden" name="maxlength[]" id="maxlength" class="form-control" value="'. $this->getBetween($column[1], '(', ')').'" placeholder="" number="true" >
+									</div>
+								</div>	
+								<!--Required-->							
 								<div class="col-md-2">
 									<div class="form-group">
 										<label for="required" class="form-label">Required:</label>
 										<select class="form-control" name="required[]" id="required" required>
-											<option value="1" '.(strpos($column[2], 'NO') !== false ? 'selected="selected"' : "").'>Yes</option>
-											<option value="0" '.(strpos($column[2], 'YES') !== false ? 'selected="selected"' : "").'>No</option>
+											<option value="1" '.(strpos($column[2], 'NO') !== false ? 'selected="selected"' : "").'>Y</option>
+											<option value="0" '.(strpos($column[2], 'YES') !== false ? 'selected="selected"' : "").'>N</option>
 										</select>
 									</div>
 								</div>	
-								<div class="col-md-1">
+								<!--Show In DataTables-->	
+								<div class="col-md-2">
 									<div class="form-group">
-										<label for="dtShow" class="form-label">DT:</label>
+										<label for="dtShow" class="form-label">Show in Table:</label>
 										<select class="form-control" name="dtShow[]" id="dtShow" required>
 										  <option value="1" selected>Y</option>
 										  <option value="0">N</option>
 										</select>
 									</div>
 								</div>
-								<div class="col-md-1">
+								<!--Remove-->
+								<div class="col-md-2 text-right">
 									<div class="form-group">
 										<a class="btn btn-danger mt-4 '.$disabled.'" href="#"><i class="fa fa-trash"></i></a>
 									</div>
@@ -177,11 +192,13 @@ class Engine
 		$label = $_POST['label'];
 		$name = $_POST['name'];
 		$iType = $_POST['iType'];
+		$minlength = $_POST['minlength']; //new features
 		$maxlength = $_POST['maxlength'];
 		$required = $_POST['required'];
+		$unique = $_POST['unique']; //new features
 		$dtShow = $_POST['dtShow'];
 		$response = array();		
-		$htmlInputs = '                        <div class="row">'."\n";
+		$htmlInputs = '<div class="row">'."\n";
 		$ciSelect = '';			
 		$ciFields = '';
 		$ciValidation = '';	
@@ -198,57 +215,69 @@ class Engine
 		
 		for ($i=0; $i < count($column); $i++) {
 			$inputlabel = (isset($label[$i]) AND $label[$i] != '')? $label[$i] : '';
-			$inputName = (isset($name[$i]) AND $name[$i] != '')? $name[$i] : '';
-			$inputMaxlength = (isset($maxlength[$i]) AND $maxlength[$i] != '')? ' maxlength="'.$maxlength[$i].'"' : '';
+			// change $name > $column because use Validation type getErrors instead SweetAlert
+			//$inputName = (isset($name[$i]) AND $name[$i] != '')? $name[$i] : '';
+			$inputName = (isset($column[$i]) AND $column[$i] != '')? $column[$i] : '';
+			$inputMinlength = (isset($minlength[$i]) AND $minlength[$i] != '')? ' minlength="'.$minlength[$i].'"' : '';
+			$inputMaxlength = (isset($maxlength[$i]) AND $maxlength[$i] != '')? ' maxlength="'.$maxlength[$i].'"' : ''; //defined by database
 			$inputRequired = (isset($required[$i]) AND $required[$i] == 1)? 'required' : '';
 			$htmlInputRequired = (isset($required[$i]) AND $required[$i] == 1)? '<span class="text-danger">*</span> ' : '';
-			$crudShow = (isset($name[$i]) AND $name[$i] != '')? 1 : 0;		
+			$crudShow = (isset($name[$i]) AND $name[$i] != '')? 1 : 0;	
+			$ciValidationMinlength = (isset($minlength[$i]) AND $minlength[$i] != '')? '|min_length['.$minlength[$i].']' : '';	
 			$ciValidationMaxlength = (isset($maxlength[$i]) AND $maxlength[$i] != '')? '|max_length['.$maxlength[$i].']' : '';
 			$ciValidationRequired = (isset($required[$i]) AND $required[$i] == 1)? 'required' : 'permit_empty';
-			$ciValidationType = '';				
+			$ciValidationUnique = (isset($unique[$i]) AND $unique[$i] == 1)? '|is_unique['.$table.'.'.$column[$i]. ','. $primaryKey. ',{'. $primaryKey . '}]' : '';			
+			$ciValidationType = '';	
 			
 			if($column[$i] == trim($primaryKey)){
-				$htmlInputs .=' 							<input type="hidden" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>'."\n";
+				$htmlInputs .='<input type="hidden" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>'."\n";
+			
 				$ciValidationType = '|numeric';														
 
 			}elseif($iType[$i] == '1' && $crudShow == '1') { 
-				$htmlInputs .= '							<div class="col-md-4">
+				$htmlInputs .= '							<div class="col-md-12">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-									<input type="text" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
+									<input type="text" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMinlength.' '.$inputMaxlength.' '.$inputRequired.'>
 								</div>
 							</div>'."\n";
+						
 			}elseif($iType[$i] == '2' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
+				$htmlInputs .= '							<div class="col-md-12">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-									<input type="number" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' number="true" '.$inputRequired.'>
-								</div>
-							</div>'."\n";	
-				$ciValidationType = '|numeric';														
-			}elseif($iType[$i] == '3' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
-								<div class="form-group">
-									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-									<input type="password" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
+									<input type="number" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMinlength.' '.$inputMaxlength.' '.$inputRequired.'>
 								</div>
 							</div>'."\n";
-			}elseif($iType[$i] == '4' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
+				
+				$ciValidationType = '|numeric';														
+			}elseif($iType[$i] == '3' && $crudShow == '1') {//password input
+				$htmlInputs .= '							<div class="col-md-12">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-									<input type="email" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>
+									<input type="password" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMinlength.' '.$inputMaxlength.' '.$inputRequired.'>
 								</div>
-							</div>'."\n";										
+							</div>'."\n";
+				
+			}elseif($iType[$i] == '4' && $crudShow == '1') {//email input
+				$htmlInputs .= '							<div class="col-md-12">
+								<div class="form-group">
+									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
+									<input type="email" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMinlength.' '.$inputMaxlength.' '.$inputRequired.'>
+								</div>
+							</div>'."\n";
+				$ciValidationType = '|valid_email';
+														
 			}elseif($iType[$i] == '5' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
+				$htmlInputs .= '							<div class="col-md-12">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
-									<textarea cols="40" rows="5" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'></textarea>
+									<textarea cols="40" rows="5" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMinlength.' '.$inputMaxlength.' '.$inputRequired.'></textarea>
 								</div>
-							</div>'."\n";					
+							</div>'."\n";
+									
 			}elseif($iType[$i] == '6' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
+				$htmlInputs .= '							<div class="col-md-12">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
 									<select id="'.$inputName.'" name="'.$inputName.'" class="custom-select" '.$inputRequired.'>
@@ -257,30 +286,34 @@ class Engine
 										<option value="select3">select3</option>
 									</select>
 								</div>
-							</div>'."\n";					
+							</div>'."\n";
+								
 			}elseif($iType[$i] == '7' && $crudShow == '1') {
-				$htmlInputs .= '							<div class="col-md-4">
+				$htmlInputs .= '<div class="col-md-12">
 								<div class="form-group">
 									<label for="'.$inputName.'"> '.$inputlabel.': '.$htmlInputRequired.'</label>
 									<input type="date" id="'.$inputName.'" name="'.$inputName.'" class="form-control" dateISO="true" '.$inputRequired.'>
 								</div>
-							</div>'."\n";					
+							</div>'."\n";
+									
 				$ciValidationType = '|valid_date';								
 			}else{
-				$htmlInputs .= '						<div class="row">'."\n"; $htmlInputs .=' 							<input type="text" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMaxlength.' '.$inputRequired.'>'."\n";					
+				$htmlInputs .= '<div class="row">'."\n"; $htmlInputs .='<input type="text" id="'.$inputName.'" name="'.$inputName.'" class="form-control" placeholder="'.$inputlabel.'"'.$inputMinlength.' '.$inputMaxlength.' '.$inputRequired.'>'."\n";					
+				
 			}
 			
-			$ciFields .= '        $fields[\''.$column[$i].'\'] = $this->request->getPost(\''.$inputName.'\');'."\n";			
-			if($column[$i] != $primaryKey) $ciValidation .= '            \''.$column[$i].'\' => [\'label\' => \''.$inputlabel.'\', \'rules\' => \''.$ciValidationRequired.$ciValidationType.$ciValidationMaxlength.'\'],'."\n";
+			$ciFields .= '$fields[\''.$column[$i].'\'] = $this->request->getPost(\''.$inputName.'\');'."\n";
+			
+			if($column[$i] != $primaryKey) $ciValidation .= '            \''.$column[$i].'\' => [\'label\' => \''.$inputlabel.'\', \'rules\' => \''.$ciValidationRequired.$ciValidationType.$ciValidationMinlength.$ciValidationMaxlength.$ciValidationUnique.'\'],'."\n";
 			if($dtShow[$i] == '1'){
-				$ciDataTable .= '				$value->'.$column[$i].','."\n";
-				$htmlDataTable .= '					<th>'.$inputlabel.'</th>'."\n";
+				$ciDataTable .= '$value->'.$column[$i].','."\n";
+				$htmlDataTable .= '<th>'.$inputlabel.'</th>'."\n";
 				$ciSelect .= $column[$i].', ';
 			}
 			if($column[$i] != $primaryKey) $allowedFields .= '\''.$column[$i].'\', ';
-			if(($i % 3 == 0))  {$htmlInputs .= '						</div>'."\n"; $htmlInputs .= '						<div class="row">'."\n"; }
-			if(!next($column)) $htmlInputs .= '						</div>'."\n";
-			if($crudShow == '1') $htmlEditFields .= '			$("#edit-form #'.$inputName.'").val(response.'.$column[$i].');'."\n";
+			if(($i % 10 == 0))  {$htmlInputs .= '						</div>'."\n"; $htmlInputs .= '						<div class="row">'."\n"; }
+			if(!next($column)) {$htmlInputs .= '						</div>'."\n";}
+			if($crudShow == '1') $htmlEditFields .= '			$("#data-form #'.$inputName.'").val(response.'.$column[$i].');'."\n";
 		}	
 
 		$ciSelect = substr($ciSelect, 0, -2);
@@ -304,7 +337,8 @@ class Engine
 		$response['success'] = true;
 		$response['message'] = '<a class="text-white" href="'.BASE_URL .'/download.php?t=c&f='.$uControlerName.'.php'.'" target="_blank">('.$uControlerName.'.php'.') Controler</a>
 		<br><a class="text-white" href="'.BASE_URL .'/download.php?t=m&f='.$uModelName.'.php'.'" target="_blank">('.$uModelName.'.php'.') Model</a>
-		<br><a class="text-white" href="'.BASE_URL .'/download.php?t=v&f='.$controlerName.'.php'.'" target="_blank">('.$controlerName.'.php'.') View</a>';
+		<br><a class="text-white" href="'.BASE_URL .'/download.php?t=v&f='.$controlerName.'.php'.'" target="_blank">('.$controlerName.'.php'.') View</a>
+		<br><p>Looking "download/template.zip and read readme.txt fist!"</p>';
 		
 		die(json_encode($response));
 	}
