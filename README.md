@@ -1,5 +1,13 @@
+# Codeigniter-4-CRUD-generator
+ADEL CCG is an easy open-source intuitive web app to create AdminLTE4 -Bootstrap 5- dashboards with CRUD operations in php.
+The CRUD application is able to manage data from any MySQL database, however complex the structure and volume of data are.
+It ships with powerful API, Controller, Model, View generator to speed up the development of your CMS, CRM or other back-office system. 
+
 # Upgrades: Fix & Features
 ## Core
+- Integrated with AdminLTE4 -Bootstrap 5-
+- Support RTL (use <html dir="rtl" lang="ar"> + adminlte.rtl.min.css in Views\layout\header.php) 
+- Support Dark mode (Replace light by dark in classes in Views\layout\master.php + Views\layout\navbar.php + Views\layout\sidebar.php ) 
 - add Unique, minlength Validation 
 - use CodeIgniter multi-Language (please read readme.txt in  '/downloads/template.zip')
 - add minlength in genertor page, remove maxlength (defined by database)
@@ -14,32 +22,23 @@
 - add input 'unique' type validate,
 - add class 'invalid-feedback' for response.error-message (not have in old code)
 - edit alert popup
+- fixed (edit, delete button) language text
 
 ## Controller
 - New Style Action Button (edit, delete button) : var $ops in function getAll() 
+- fixed (edit, delete button) language text
 
 ## Next Features!
 - add Action 'copy' for clone data
 
 # Install
-1. extrack template.zip in 'downloads'
+1. extract template-bs5.zip in 'downloads'
 2. copy layout folder to '{youProject}/App/Views/'
 3. if you want make empty view. looking viewtemplate.php in 'example'
 4. If you want to change the default site language
 - copy any folder in 'Language' to '{youProject}/App/Language/'
 - change the language code $defaultLocale in 'App/Config/App.php' (en','ar','th')
 - Lean Ci4 Localization in [Ci4 Docs](https://codeigniter4.github.io/userguide/outgoing/localization.html)
-
-
-> Sorry! I write and speak little English. please suggest
-
----
-
-# Codeigniter-4-CRUD-generator
-ADEL CCG is an easy open-source intuitive web app to create AdminLTE3 -Bootstrap 4- dashboards with CRUD operations in php.
-The CRUD application is able to manage data from any MySQL database, however complex the structure and volume of data are.
-It ships with powerful API, Controller, Model, View generator to speed up the development of your CMS, CRM or other back-office system. 
-
 
 Youtube video:
 
@@ -56,3 +55,8 @@ SS:
 CI forum thread:
 
 https://forum.codeigniter.com/thread-77877.html
+
+
+
+---
+
