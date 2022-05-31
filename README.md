@@ -6,7 +6,7 @@ It ships with powerful API, Controller, Model, View generator to speed up the de
 # Upgrades: Fix & Features
 ## Core
 - Integrated with AdminLTE4 -Bootstrap 5- (https://github.com/MGatner/adminlte4)
-- Support RTL (use <html dir="rtl" lang="ar"> + adminlte.rtl.min.css in Views\layout\header.php) 
+- Support RTL (use  dir="rtl" lang="ar" + adminlte.rtl.min.css in Views\layout\header.php) 
 - Support Dark mode (Replace light by dark in classes in Views\layout\master.php + Views\layout\navbar.php + Views\layout\sidebar.php ) 
 - add Unique, minlength Validation 
 - use CodeIgniter multi-Language (please read readme.txt in  '/downloads/template.zip')
