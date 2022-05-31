@@ -336,7 +336,7 @@ class Engine
 		$response['message'] = '<a class="text-white" href="'.BASE_URL .'/download.php?t=c&f='.$uControlerName.'.php'.'" target="_blank">('.$uControlerName.'.php'.') Controler</a>
 		<br><a class="text-white" href="'.BASE_URL .'/download.php?t=m&f='.$uModelName.'.php'.'" target="_blank">('.$uModelName.'.php'.') Model</a>
 		<br><a class="text-white" href="'.BASE_URL .'/download.php?t=v&f='.$controlerName.'.php'.'" target="_blank">('.$controlerName.'.php'.') View</a>
-		<br><p>Looking "download/template-bs5.zip and read readme.txt fist!"</p>';
+		<br><p>Looking "download/template-bs5.zip and read readme.txt first!"</p>';
 		
 		die(json_encode($response));
 	}
