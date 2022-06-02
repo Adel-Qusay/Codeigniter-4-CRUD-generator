@@ -342,12 +342,18 @@ class Engine
 	}
 		
 	public function getBetween($string, $start, $end){
-		$string = ' ' . $string;
-		$ini = strpos($string, $start);
-		if ($ini == 0) return '';
-		$ini += strlen($start);
-		$len = strpos($string, $end, $ini) - $ini;
-		return substr($string, $ini, $len);
+	  $string = ' ' . $string;
+	  $ini = strpos($string, $start);
+	  if ($ini == 0) return '';
+	  $ini += strlen($start);
+	  $len = strpos($string, $end, $ini) - $ini;
+	  //fix bug: example >> decimal(8,2)
+	  $result = substr($string, $ini, $len);
+	  $ini = strpos($result, ',');
+	  if($ini != false){
+	    $result = substr($result,0,$ini);
+	  }
+	  return $result;
 	}
 	
 	public function snakeToCamel($str) {
