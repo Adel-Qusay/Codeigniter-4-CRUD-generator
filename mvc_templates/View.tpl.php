@@ -74,7 +74,7 @@
       "autoWidth": false,
       "scrollY": '45vh',
       "scrollX": true,
-      "scrollCollapse": False,
+      "scrollCollapse": false,
       "responsive": false,
       "ajax": {
         "url": '<?php echo base_url($controller . "/getAll") ?>',
