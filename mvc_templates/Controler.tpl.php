@@ -34,10 +34,8 @@ class @@@uControlerName@@@ extends BaseController
 
 	public function getAll()
 	{
- 		$response = array();		
-		
-	    $data['data'] = array();
- 
+ 		$response = $data['data'] = array();	
+
 		$result = $this->@@@modelName@@@->select()->findAll();
 		
 		foreach ($result as $key => $value) {
