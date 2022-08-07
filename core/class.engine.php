@@ -48,7 +48,7 @@ class Engine
 		
 		if(!$db) die("Database error");
 	
-		$result = mysqli_query($db,"SHOW TABLES FROM ".$_POST['database']);
+		$result = mysqli_query($db,"SHOW TABLES FROM `".$_POST['database']."`");
 		
 		$tablesListHtml = '<option value="" selected="selected">-- Select --</option>';
 
@@ -69,7 +69,7 @@ class Engine
 		
 		if(!$db) die("Database error");
 		
-		$result = mysqli_query($db,'SHOW KEYS FROM '.$_POST['table'].' WHERE Key_name = \'PRIMARY\'');
+		$result = mysqli_query($db,'SHOW KEYS FROM `'.$_POST['table'].'` WHERE Key_name = \'PRIMARY\'');
 
 		$primaryColumnsListHtml = '';
 
@@ -90,7 +90,7 @@ class Engine
 		if(!$db) die("Database error");
 		
 		$result = mysqli_query($db,"DESC ".$_POST['table']);
-		$pkResult = mysqli_fetch_array(mysqli_query($db,'SHOW KEYS FROM '.$_POST['table'].' WHERE Key_name = \'PRIMARY\''));
+		$pkResult = mysqli_fetch_array(mysqli_query($db,'SHOW KEYS FROM `'.$_POST['table'].'` WHERE Key_name = \'PRIMARY\''));
 
 		$columnsListHtml = '<ul class="list-group">';
 
